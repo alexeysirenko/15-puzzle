@@ -1,7 +1,7 @@
 import Board.BoardMatrix
 import org.scalatest.{AppendedClues, FunSuite, Matchers, OptionValues}
 
-class BoardTest extends FunSuite with Matchers with OptionValues with AppendedClues {
+class BoardTest extends FunSuite with Matchers with OptionValues with AppendedClues with BoardHelpers {
 
   test("Not allow creation of empty board") {
     an [Exception] should be thrownBy Board(Vector.empty)
@@ -86,7 +86,7 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
   test("Restore initial state after moving around the board") {
     val initialBoard = Board(createTestBoardMatrix(size = 2, emptyX = 0, emptyY = 0))
     val movesForward = List(Puzzle.moveRight, Puzzle.moveDown, Puzzle.moveLeft, Puzzle.moveUp)
-    val movesBack = List(Puzzle.moveDown, Puzzle.moveRight, Puzzle.moveUp, Puzzle.moveLeft)
+    val movesBack = List(Puzzle.moveLeft, Puzzle.moveUp,Puzzle.moveRight, Puzzle.moveDown).reverse
 
     (movesForward ++ movesBack).foldLeft(initialBoard) { (acc, move) =>
       acc.moveEmptyBlock(move).value
@@ -127,30 +127,13 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
     }
   }
 
-  test("Self-test test matrix creation") {
-    createTestBoardMatrix(1, 0, 0) shouldBe Vector(
-      Vector(Board.EMPTY_BLOCK)
-    )
-    createTestBoardMatrix(2, 1, 1) shouldBe Vector(
-      Vector(1, 2),
-      Vector(3, Board.EMPTY_BLOCK)
-    )
-    createTestBoardMatrix(3, 2, 2) shouldBe Vector(
-      Vector(1, 2, 3),
-      Vector(4, 5, 6),
-      Vector(7, 8, Board.EMPTY_BLOCK)
-    )
+  test("Show printable board representation correctly") {
+    val obtained = Board(createTestBoardMatrix(2, 1, 1)).show
+    val expected =
+      s"|1|2|\n" +
+      s"|3| |\n"
+
+    obtained shouldBe expected
   }
 
-  def createTestBoardMatrix(size: Int, emptyX: Int, emptyY: Int): BoardMatrix  = {
-    require(emptyX < size && emptyY < size && emptyX >=0 && emptyY >= 0)
-
-    val dices = (1 until size * size)
-      .foldLeft(List.empty[Int])((acc, value) => value :: acc)
-      .reverse
-
-    val (first, second) = dices.splitAt(emptyX + emptyY * size)
-
-    (first ::: (Board.EMPTY_BLOCK :: second)).toVector.sliding(size, size).toVector
-  }
 }
