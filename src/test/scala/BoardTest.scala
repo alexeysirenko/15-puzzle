@@ -112,6 +112,7 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
       board.matrix.foreach(row => row.size shouldBe boardSize)
 
       val allDices = board.matrix.reduce(_ ++ _)
+      allDices.max shouldBe boardSize * boardSize -1
 
       val uniqueDices = allDices.toSet
       uniqueDices.size shouldBe boardSize * boardSize
