@@ -108,8 +108,6 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
     val randomizedBoards = seeds.map(seed => Board.createBoard(randomSeed = seed, boardSize))
 
     randomizedBoards.foreach { board =>
-      println(board)
-
       board.matrix.size shouldBe boardSize
       board.matrix.foreach(row => row.size shouldBe boardSize)
 
