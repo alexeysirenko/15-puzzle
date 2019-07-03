@@ -2,7 +2,7 @@ import scala.util.Random
 
 object Application extends App {
 
-  val BOARD_SIZE = 1
+  val BOARD_SIZE = 4
 
   val controls = Map(
     "w" -> (Puzzle.moveUp, "move up"),
