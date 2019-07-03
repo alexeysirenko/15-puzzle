@@ -1,7 +1,7 @@
 trait BoardGenerator {
 
   def createBoard(randomSeed: Long, size: Int): Board = {
-    val initialBoardState = (Board.EMPTY_BLOCK :: (1 until size * size)
+    val initialBoardState = (Board.EMPTY_DICE :: (1 until size * size)
       .foldLeft(List.empty[Int])((acc, value) => value :: acc))
       .toVector
 

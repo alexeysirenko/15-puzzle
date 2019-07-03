@@ -7,7 +7,7 @@ trait BoardPrinter {
     board.matrix.foldLeft("")({ (acc, row) =>
       val printableRow = row
         .map({value =>
-          val diceTitle = if (value == Board.EMPTY_BLOCK) " " else value.toString
+          val diceTitle = if (value == Board.EMPTY_DICE) " " else value.toString
           val diceTitleWithPadding = " " * (diceSize - diceTitle.length) + diceTitle
           diceTitleWithPadding
         }).mkString("|", "|", "|")

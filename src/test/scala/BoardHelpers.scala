@@ -5,16 +5,16 @@ trait BoardHelpers { self: FunSuite with Matchers =>
 
   test("Self-test test matrix creation") {
     createTestBoardMatrix(1, 0, 0) shouldBe Vector(
-      Vector(Board.EMPTY_BLOCK)
+      Vector(Board.EMPTY_DICE)
     )
     createTestBoardMatrix(2, 1, 1) shouldBe Vector(
       Vector(1, 2),
-      Vector(3, Board.EMPTY_BLOCK)
+      Vector(3, Board.EMPTY_DICE)
     )
     createTestBoardMatrix(3, 2, 2) shouldBe Vector(
       Vector(1, 2, 3),
       Vector(4, 5, 6),
-      Vector(7, 8, Board.EMPTY_BLOCK)
+      Vector(7, 8, Board.EMPTY_DICE)
     )
   }
 
@@ -24,7 +24,7 @@ trait BoardHelpers { self: FunSuite with Matchers =>
       .foldLeft(List.empty[Int])((acc, value) => value :: acc)
       .reverse
     val (first, second) = dices.splitAt(emptyX + emptyY * size)
-    (first ::: (Board.EMPTY_BLOCK :: second)).toVector.sliding(size, size).toVector
+    (first ::: (Board.EMPTY_DICE :: second)).toVector.sliding(size, size).toVector
   }
 
 }

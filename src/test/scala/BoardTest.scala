@@ -19,7 +19,7 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
 
   test("Not allow creation of asymmetrical board") {
     val matrix = Vector(
-      Vector(1, Board.EMPTY_BLOCK),
+      Vector(1, Board.EMPTY_DICE),
       Vector(3),
       Vector(4, 5, 6)
     )
@@ -30,15 +30,15 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
     val matrix1 = createTestBoardMatrix(size = 2, emptyX = 1, emptyY = 1)
     val matrix2 = createTestBoardMatrix(size = 3, emptyX = 2, emptyY = 0)
 
-    Board(matrix1).emptyBlockXY shouldBe (1, 1)
-    Board(matrix2).emptyBlockXY shouldBe (2, 0)
+    Board(matrix1).emptyDiceXY shouldBe (1, 1)
+    Board(matrix2).emptyDiceXY shouldBe (2, 0)
   }
 
   test("Move empty dice down") {
     val initialBoard = Board(createTestBoardMatrix(size = 3, emptyX = 1, emptyY = 0))
 
-    val movedOnceBoard = initialBoard.moveEmptyBlock(Puzzle.moveDown).value
-    val movedTwiceBoard = movedOnceBoard.moveEmptyBlock(Puzzle.moveDown).value
+    val movedOnceBoard = initialBoard.moveEmptyDice(Puzzle.moveDown).value
+    val movedTwiceBoard = movedOnceBoard.moveEmptyDice(Puzzle.moveDown).value
 
     movedOnceBoard.matrix shouldBe Vector(Vector(1, 4, 2), Vector(3, 0, 5), Vector(6, 7, 8))
     movedTwiceBoard.matrix shouldBe Vector(Vector(1, 4, 2), Vector(3, 7, 5), Vector(6, 0, 8))
@@ -47,8 +47,8 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
   test("Move empty dice up") {
     val initialBoard = Board(createTestBoardMatrix(size = 3, emptyX = 2, emptyY = 2))
 
-    val movedOnceBoard = initialBoard.moveEmptyBlock(Puzzle.moveUp).value
-    val movedTwiceBoard = movedOnceBoard.moveEmptyBlock(Puzzle.moveUp).value
+    val movedOnceBoard = initialBoard.moveEmptyDice(Puzzle.moveUp).value
+    val movedTwiceBoard = movedOnceBoard.moveEmptyDice(Puzzle.moveUp).value
 
     movedOnceBoard.matrix shouldBe Vector(Vector(1, 2, 3), Vector(4, 5, 0), Vector(7, 8, 6))
     movedTwiceBoard.matrix shouldBe Vector(Vector(1, 2, 0), Vector(4, 5, 3), Vector(7, 8, 6))
@@ -57,8 +57,8 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
   test("Move empty dice right") {
     val initialBoard = Board(createTestBoardMatrix(size = 3, emptyX = 0, emptyY = 1))
 
-    val movedOnceBoard = initialBoard.moveEmptyBlock(Puzzle.moveRight).value
-    val movedTwiceBoard = movedOnceBoard.moveEmptyBlock(Puzzle.moveRight).value
+    val movedOnceBoard = initialBoard.moveEmptyDice(Puzzle.moveRight).value
+    val movedTwiceBoard = movedOnceBoard.moveEmptyDice(Puzzle.moveRight).value
 
     movedOnceBoard.matrix shouldBe createTestBoardMatrix(size = 3, emptyX = 1, emptyY = 1)
     movedTwiceBoard.matrix shouldBe createTestBoardMatrix(size = 3, emptyX = 2, emptyY = 1)
@@ -67,8 +67,8 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
   test("Move empty dice left") {
     val initialBoard = Board(createTestBoardMatrix(size = 3, emptyX = 2, emptyY = 1))
 
-    val movedOnceBoard = initialBoard.moveEmptyBlock(Puzzle.moveLeft).value
-    val movedTwiceBoard = movedOnceBoard.moveEmptyBlock(Puzzle.moveLeft).value
+    val movedOnceBoard = initialBoard.moveEmptyDice(Puzzle.moveLeft).value
+    val movedTwiceBoard = movedOnceBoard.moveEmptyDice(Puzzle.moveLeft).value
 
     movedOnceBoard.matrix shouldBe createTestBoardMatrix(size = 3, emptyX = 1, emptyY = 1)
     movedTwiceBoard.matrix shouldBe createTestBoardMatrix(size = 3, emptyX = 0, emptyY = 1)
@@ -77,10 +77,10 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
   test("Handle moving of an empty dice out of bounds") {
     val initialBoard = Board(createTestBoardMatrix(size = 1, emptyX = 0, emptyY = 0))
 
-    initialBoard.moveEmptyBlock(Puzzle.moveLeft) shouldBe None
-    initialBoard.moveEmptyBlock(Puzzle.moveRight) shouldBe None
-    initialBoard.moveEmptyBlock(Puzzle.moveUp) shouldBe None
-    initialBoard.moveEmptyBlock(Puzzle.moveDown) shouldBe None
+    initialBoard.moveEmptyDice(Puzzle.moveLeft) shouldBe None
+    initialBoard.moveEmptyDice(Puzzle.moveRight) shouldBe None
+    initialBoard.moveEmptyDice(Puzzle.moveUp) shouldBe None
+    initialBoard.moveEmptyDice(Puzzle.moveDown) shouldBe None
   }
 
   test("Restore initial state after moving around the board") {
@@ -89,16 +89,16 @@ class BoardTest extends FunSuite with Matchers with OptionValues with AppendedCl
     val movesBack = List(Puzzle.moveLeft, Puzzle.moveUp,Puzzle.moveRight, Puzzle.moveDown).reverse
 
     (movesForward ++ movesBack).foldLeft(initialBoard) { (acc, move) =>
-      acc.moveEmptyBlock(move).value
+      acc.moveEmptyDice(move).value
     } shouldBe initialBoard
   }
 
   test("Handle completed puzzle") {
     val initialBoard = Board(createTestBoardMatrix(size = 2, emptyX = 0, emptyY = 1))
     initialBoard.isValid shouldBe false
-    val movedBoardOnce = initialBoard.moveEmptyBlock(Puzzle.moveRight).value
+    val movedBoardOnce = initialBoard.moveEmptyDice(Puzzle.moveRight).value
     movedBoardOnce.isValid shouldBe true
-    val movedBoardTwice = initialBoard.moveEmptyBlock(Puzzle.moveUp).value
+    val movedBoardTwice = initialBoard.moveEmptyDice(Puzzle.moveUp).value
     movedBoardTwice.isValid shouldBe false
   }
 
