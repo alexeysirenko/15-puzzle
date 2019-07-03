@@ -2,28 +2,34 @@ import scala.util.Random
 
 object Application extends App {
 
-  println("Controls:")
-  println("w - move up")
-  println("s - move down")
-  println("a - move left")
-  println("d - move right")
-  println("Ctrl + C - exit the game")
+  val BOARD_SIZE = 1
 
-  var board = Board.createBoard(Random.nextLong(), 4)
+  val controls = Map(
+    "w" -> (Puzzle.moveUp, "move up"),
+    "s" -> (Puzzle.moveDown, "move down"),
+    "a" -> (Puzzle.moveLeft, "move left"),
+    "d" -> (Puzzle.moveRight, "move right")
+  )
+
+  println("Controls:")
+  println(showControls(controls))
+
+  var board = Board.createBoard(Random.nextLong(), BOARD_SIZE)
 
   while (true) {
     println(board.show)
     if (board.isValid) println("You have won!")
-    board = scala.io.StdIn.readLine() match {
-      case "w" => Puzzle.update(Puzzle.moveUp)(board)
-      case "s" => Puzzle.update(Puzzle.moveDown)(board)
-      case "a" => Puzzle.update(Puzzle.moveLeft)(board)
-      case "d" => Puzzle.update(Puzzle.moveRight)(board)
-      case unknown =>
-        println(s"Unknown command $unknown")
+    val input = scala.io.StdIn.readLine()
+    board = controls.get(input) match {
+      case Some((move, _)) => Puzzle.update(move)(board)
+      case _ =>
+        println(s"Unknown command '$input'")
         board
     }
   }
 
-
+  def showControls(controls: Map[String, (Move, String)]): String = controls
+    .foldLeft("")({ case (acc, (key, (_, description))) =>
+      s"$acc$key - $description\n"
+    })
 }

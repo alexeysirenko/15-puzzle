@@ -1,9 +1,8 @@
 trait BoardGenerator {
 
   def createBoard(randomSeed: Long, size: Int): Board = {
-    val initialBoardState = (Board.emptyBlock :: (1 until size * size)
+    val initialBoardState = (Board.EMPTY_BLOCK :: (1 until size * size)
       .foldLeft(List.empty[Int])((acc, value) => value :: acc))
-      .reverse
       .toVector
 
     val (randomizedBoardState, _) = (0 until initialBoardState.length)
@@ -11,7 +10,8 @@ trait BoardGenerator {
         val (randomIndex, newRNG) = RNG.nonNegativeLessThan(boardState.length)(rng)
         val oldValueByIndex = boardState(index)
         val oldValueByRandomIndex = boardState(randomIndex)
-        (boardState.updated(index, oldValueByRandomIndex).updated(randomIndex, oldValueByIndex), newRNG)
+        val swapped = boardState.updated(index, oldValueByRandomIndex).updated(randomIndex, oldValueByIndex)
+        (swapped, newRNG)
       }
 
     Board(randomizedBoardState.sliding(size, size).toVector)

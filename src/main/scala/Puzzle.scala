@@ -11,5 +11,6 @@ object Puzzle {
   def update: Input => Board => Board = (i: Input) => (b: Board) =>
     (i, b) match {
       case (move @ Move(_, _), board) => board.moveEmptyBlock(move).getOrElse(board)
+      case _ => b
     }
 }

@@ -1,35 +1,35 @@
 
-case class Board(state: Vector[Vector[Int]]) { // TODO: create a type alias for this
-  require(state.nonEmpty && state.head.nonEmpty, "Board should not be empty")
-  require(state.exists(_.contains(Board.emptyBlock)), "Empty block is not specified")
 
-  lazy val emptyBlockXY: (Int, Int) = {
-    state
-      .zipWithIndex
-      .map({ case (row, y) => (row.indexOf(Board.emptyBlock), y) })
-      .find({ case (x, y) => x >= 0 })
-      .get
-  }
+case class Board(matrix: Board.BoardMatrix) {
+  require(matrix.nonEmpty && matrix.head.nonEmpty, "Board should not be empty")
+  require(matrix.exists(_.contains(Board.EMPTY_BLOCK)), "Empty block is not specified")
+  require(matrix.forall(row => row.size == matrix.head.size), "All rows should have equal length")
+
+  lazy val emptyBlockXY: (Int, Int) = matrix
+    .zipWithIndex
+    .map({ case (row, y) => (row.indexOf(Board.EMPTY_BLOCK), y) })
+    .find({ case (x, y) => x >= 0 })
+    .get
 
   def moveEmptyBlock(move: Move): Option[Board] = {
     val (emptyBlockX, emptyBlockY) = emptyBlockXY
-    val boardYBounds = 0 until state.length
-    val boardXBounds = 0 until state.head.length
+    val boardYBounds = 0 until matrix.length
+    val boardXBounds = 0 until matrix.head.length
     val newEmptyBlockX = emptyBlockX + move.x
     val newEmptyBlockY = emptyBlockY + move.y
     if (boardXBounds.contains(newEmptyBlockX) && boardYBounds.contains(newEmptyBlockY)) {
-      val newState = if (emptyBlockY != newEmptyBlockY) {
-        val sourceRow = state(emptyBlockY)
-        val destRow = state(newEmptyBlockY)
+      val newMatrix = if (emptyBlockY != newEmptyBlockY) {
+        val sourceRow = matrix(emptyBlockY)
+        val destRow = matrix(newEmptyBlockY)
         val newSourceRow = sourceRow.updated(emptyBlockX, destRow(newEmptyBlockX))
-        val newDestRow =  destRow.updated(newEmptyBlockX, Board.emptyBlock)
-        state.updated(emptyBlockY, newSourceRow).updated(newEmptyBlockY, newDestRow)
+        val newDestRow =  destRow.updated(newEmptyBlockX, Board.EMPTY_BLOCK)
+        matrix.updated(emptyBlockY, newSourceRow).updated(newEmptyBlockY, newDestRow)
       } else {
-        val row = state(emptyBlockY)
-        val newRow = row.updated(emptyBlockX, row(newEmptyBlockX)).updated(newEmptyBlockX, Board.emptyBlock)
-        state.updated(emptyBlockY, newRow)
+        val row = matrix(emptyBlockY)
+        val newRow = row.updated(emptyBlockX, row(newEmptyBlockX)).updated(newEmptyBlockX, Board.EMPTY_BLOCK)
+        matrix.updated(emptyBlockY, newRow)
       }
-      Some(Board(newState))
+      Some(Board(newMatrix))
     } else {
       None
     }
@@ -38,18 +38,9 @@ case class Board(state: Vector[Vector[Int]]) { // TODO: create a type alias for 
 
 object Board extends BoardGenerator {
 
-  val emptyBlock = 0
+  type BoardMatrix = Vector[Vector[Int]]
 
-  // TODO: move to tests
-  def init2(seed: Int): Board = {
-    // todo: generate randomly
-    val l1 = Vector(1, 2, 3, 4)
-    val l2 = Vector(5, 6, 7, 8)
-    val l3 = Vector(9, 10, 11, 12)
-    val l4 = Vector(13, 14, emptyBlock, 15)
-
-    Board(Vector(l1, l2, l3, l4))
-  }
+  val EMPTY_BLOCK = 0
 
   implicit class PrintableBoard(board: Board) extends BoardPrinter {
     lazy val show: String = show(board)
